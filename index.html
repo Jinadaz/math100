@@ -15,9 +15,13 @@
         h3 {
             text-align: center;
         }
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
         .exercise {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* 自适应列数 */
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             grid-gap: 20px;
             margin-top: 20px;
         }
@@ -47,19 +51,19 @@
         /* 媒体查询 */
         @media (max-width: 600px) {
             .exercise {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* 手机设备 */
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
             }
             .answer {
-                width: 30px; /* 更小的输入框 */
+                width: 30px;
             }
         }
 
         @media (min-width: 601px) and (max-width: 1024px) {
             .exercise {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* 平板设备 */
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
             .answer {
-                width: 35px; /* 中等输入框 */
+                width: 35px;
             }
         }
     </style>
@@ -67,6 +71,16 @@
 <body>
     <h2>100以内随机数学练习题</h2>
     <h3>😘Natasha 加油！！！</h3>
+    <div class="controls">
+        <label for="questionCount">选择题目数量：</label>
+        <select id="questionCount" onchange="generateRandomExercise()">
+            <option value="10">10题</option>
+            <option value="20">20题</option>
+            <option value="30" selected>30题</option>
+            <option value="40">40题</option>
+            <option value="50">50题</option>
+        </select>
+    </div>
     <div class="exercise" id="exercise"></div>
     <button onclick="checkAnswers()">检查答案</button>
     <p id="status"></p>
@@ -74,12 +88,12 @@
     <script>
         const exerciseElement = document.getElementById('exercise');
         const statusElement = document.getElementById('status');
-        const numQuestions = 30; // 题目数量
         let questions = [];
         let correctAnswers = [];
 
         // 生成随机加减法题目，确保答案在100以内
         function generateRandomExercise() {
+            const numQuestions = parseInt(document.getElementById('questionCount').value);
             questions = [];
             correctAnswers = [];
             exerciseElement.innerHTML = '';
@@ -91,13 +105,13 @@
                 if (isAddition) {
                     // 确保两个数相加小于100
                     num1 = Math.floor(Math.random() * 100);
-                    num2 = Math.floor(Math.random() * (100 - num1)); // num2 <= 100 - num1
+                    num2 = Math.floor(Math.random() * (100 - num1));
                     questionText = `${num1} + ${num2} = `;
                     correctAnswer = num1 + num2;
                 } else {
-                    // 确保第一个数大于第二个数以避免负数，且两个数相减小于100
+                    // 确保第一个数大于第二个数以避免负数
                     num1 = Math.floor(Math.random() * 100);
-                    num2 = Math.floor(Math.random() * (num1 + 1)); // num2 <= num1
+                    num2 = Math.floor(Math.random() * (num1 + 1));
                     questionText = `${num1} - ${num2} = `;
                     correctAnswer = num1 - num2;
                 }
@@ -121,13 +135,13 @@
                 const userAnswer = parseInt(input.value) || 0;
                 if (userAnswer === correctAnswers[index]) {
                     correctCount++;
-                    input.style.backgroundColor = 'lightgreen'; // 正确答案
+                    input.style.backgroundColor = 'lightgreen';
                 } else {
-                    input.style.backgroundColor = 'salmon'; // 错误答案
+                    input.style.backgroundColor = 'salmon';
                 }
             });
 
-            statusElement.textContent = `你答对了 ${correctCount} / ${numQuestions} 题！`;
+            statusElement.textContent = `你答对了 ${correctCount} / ${inputs.length} 题！`;
         }
 
         // 初始化
