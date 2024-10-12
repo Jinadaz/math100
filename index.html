@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Natasha improve</title>
+    <title>Natasha Improve</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        h2 {
-            text-align: center;
-        }
-        h3 {
+        h2, h3 {
             text-align: center;
         }
         .controls {
@@ -39,7 +36,7 @@
         }
         button {
             display: block;
-            margin: 20px auto;
+            margin: 10px auto;
             padding: 10px 20px;
         }
         #status {
@@ -47,8 +44,6 @@
             font-size: 1.5em;
             color: green;
         }
-
-        /* 媒体查询 */
         @media (max-width: 600px) {
             .exercise {
                 grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -57,7 +52,6 @@
                 width: 30px;
             }
         }
-
         @media (min-width: 601px) and (max-width: 1024px) {
             .exercise {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -73,43 +67,48 @@
     <h3>😘Natasha 加油！！！</h3>
     <div class="controls">
         <label for="questionCount">选择题目数量：</label>
-        <select id="questionCount" onchange="generateRandomExercise()">
+        <select id="questionCount">
             <option value="10">10题</option>
             <option value="20">20题</option>
             <option value="30" selected>30题</option>
             <option value="40">40题</option>
             <option value="50">50题</option>
+            <option value="100">100题</option>
         </select>
     </div>
     <div class="exercise" id="exercise"></div>
-    <button onclick="checkAnswers()">检查答案</button>
+    <button id="checkButton">检查答案</button>
+    <button id="resetButton">重置</button>
     <p id="status"></p>
 
     <script>
         const exerciseElement = document.getElementById('exercise');
         const statusElement = document.getElementById('status');
+        const questionCountSelect = document.getElementById('questionCount');
+        const checkButton = document.getElementById('checkButton');
+        const resetButton = document.getElementById('resetButton');
         let questions = [];
         let correctAnswers = [];
+        let startTime;  // 用于记录开始时间
 
         // 生成随机加减法题目，确保答案在100以内
         function generateRandomExercise() {
-            const numQuestions = parseInt(document.getElementById('questionCount').value);
+            const numQuestions = parseInt(questionCountSelect.value);
             questions = [];
             correctAnswers = [];
             exerciseElement.innerHTML = '';
+            statusElement.textContent = '';  // 清除状态信息
 
             for (let i = 0; i < numQuestions; i++) {
                 let num1, num2, questionText, correctAnswer;
                 const isAddition = Math.random() > 0.5;
 
                 if (isAddition) {
-                    // 确保两个数相加小于100
                     num1 = Math.floor(Math.random() * 100);
                     num2 = Math.floor(Math.random() * (100 - num1));
                     questionText = `${num1} + ${num2} = `;
                     correctAnswer = num1 + num2;
                 } else {
-                    // 确保第一个数大于第二个数以避免负数
                     num1 = Math.floor(Math.random() * 100);
                     num2 = Math.floor(Math.random() * (num1 + 1));
                     questionText = `${num1} - ${num2} = `;
@@ -124,25 +123,46 @@
                 questionElement.innerHTML = `${questionText}<input class="answer" type="number" placeholder="答案">`;
                 exerciseElement.appendChild(questionElement);
             }
+
+            // 记录开始时间
+            startTime = new Date();
         }
 
         // 检查答案
         function checkAnswers() {
             const inputs = document.querySelectorAll('.answer');
             let correctCount = 0;
+            let unanswered = false;
 
             inputs.forEach((input, index) => {
-                const userAnswer = parseInt(input.value) || 0;
+                const userAnswer = input.value.trim() === '' ? null : parseInt(input.value);
                 if (userAnswer === correctAnswers[index]) {
                     correctCount++;
                     input.style.backgroundColor = 'lightgreen';
+                } else if (userAnswer === null) {
+                    unanswered = true;
+                    input.style.backgroundColor = 'lightyellow';
                 } else {
                     input.style.backgroundColor = 'salmon';
                 }
             });
 
-            statusElement.textContent = `你答对了 ${correctCount} / ${inputs.length} 题！`;
+            if (unanswered) {
+                statusElement.textContent = `请完成所有题目后再检查！`;
+                statusElement.style.color = 'orange';
+            } else {
+                // 计算完成时间
+                const endTime = new Date();
+                const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
+                statusElement.textContent = `你答对了 ${correctCount} / ${inputs.length} 题！用时：${timeTaken} 秒。`;
+                statusElement.style.color = 'green';
+            }
         }
+
+        // 绑定事件
+        questionCountSelect.addEventListener('change', generateRandomExercise);
+        checkButton.addEventListener('click', checkAnswers);
+        resetButton.addEventListener('click', generateRandomExercise);
 
         // 初始化
         generateRandomExercise();
