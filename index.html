@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机数学练习题</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+        }
+        h3 {
+            text-align: center;
+        }
+        .exercise {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* 自适应列数 */
+            grid-gap: 20px;
+            margin-top: 20px;
+        }
+        .question {
+            border-bottom: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+        .answer {
+            border: 1px solid #000;
+            width: 40px;
+            text-align: center;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+        }
+        #status {
+            text-align: center;
+            font-size: 1.5em;
+            color: green;
+        }
+
+        /* 媒体查询 */
+        @media (max-width: 600px) {
+            .exercise {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* 手机设备 */
+            }
+            .answer {
+                width: 30px; /* 更小的输入框 */
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 1024px) {
+            .exercise {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* 平板设备 */
+            }
+            .answer {
+                width: 35px; /* 中等输入框 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>100以内随机数学练习题</h2>
+    <h3>😘Natasha 加油！！！</h3>
+    <div class="exercise" id="exercise"></div>
+    <button onclick="checkAnswers()">检查答案</button>
+    <p id="status"></p>
+
+    <script>
+        const exerciseElement = document.getElementById('exercise');
+        const statusElement = document.getElementById('status');
+        const numQuestions = 30; // 题目数量
+        let questions = [];
+        let correctAnswers = [];
+
+        // 生成随机加减法题目，确保答案在100以内
+        function generateRandomExercise() {
+            questions = [];
+            correctAnswers = [];
+            exerciseElement.innerHTML = '';
+
+            for (let i = 0; i < numQuestions; i++) {
+                let num1, num2, questionText, correctAnswer;
+                const isAddition = Math.random() > 0.5;
+
+                if (isAddition) {
+                    // 确保两个数相加小于100
+                    num1 = Math.floor(Math.random() * 100);
+                    num2 = Math.floor(Math.random() * (100 - num1)); // num2 <= 100 - num1
+                    questionText = `${num1} + ${num2} = `;
+                    correctAnswer = num1 + num2;
+                } else {
+                    // 确保第一个数大于第二个数以避免负数，且两个数相减小于100
+                    num1 = Math.floor(Math.random() * 100);
+                    num2 = Math.floor(Math.random() * (num1 + 1)); // num2 <= num1
+                    questionText = `${num1} - ${num2} = `;
+                    correctAnswer = num1 - num2;
+                }
+
+                questions.push(questionText);
+                correctAnswers.push(correctAnswer);
+
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question';
+                questionElement.innerHTML = `${questionText}<input class="answer" type="number" placeholder="答案">`;
+                exerciseElement.appendChild(questionElement);
+            }
+        }
+
+        // 检查答案
+        function checkAnswers() {
+            const inputs = document.querySelectorAll('.answer');
+            let correctCount = 0;
+
+            inputs.forEach((input, index) => {
+                const userAnswer = parseInt(input.value) || 0;
+                if (userAnswer === correctAnswers[index]) {
+                    correctCount++;
+                    input.style.backgroundColor = 'lightgreen'; // 正确答案
+                } else {
+                    input.style.backgroundColor = 'salmon'; // 错误答案
+                }
+            });
+
+            statusElement.textContent = `你答对了 ${correctCount} / ${numQuestions} 题！`;
+        }
+
+        // 初始化
+        generateRandomExercise();
+    </script>
+</body>
+</html>
