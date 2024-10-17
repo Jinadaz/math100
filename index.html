@@ -81,8 +81,9 @@
             font-size: 1.5em;
             font-weight: bold;
         }
-        .emoji {
-            font-size: 1.5em;
+        #resultImage {
+            text-align: center;
+            margin-top: 20px;
         }
         @media (max-width: 600px) {
             .exercise {
@@ -111,7 +112,7 @@
         <select id="questionCount">
             <option value="10">10 Questions</option>
             <option value="20">20 Questions</option>
-            <option value="30" selected>30 Questions</option>
+            <option value="30">30 Questions</option>
             <option value="40">40 Questions</option>
             <option value="50">50 Questions</option>
             <option value="100">100 Questions</option>
@@ -121,6 +122,7 @@
     <button id="checkButton">✅ Check Answers 👍</button>
     <button id="resetButton">⏳ Start Over</button>
     <p id="status"></p>
+    <div id="resultImage"></div>
 
     <script>
         const exerciseElement = document.getElementById('exercise');
@@ -128,6 +130,7 @@
         const questionCountSelect = document.getElementById('questionCount');
         const checkButton = document.getElementById('checkButton');
         const resetButton = document.getElementById('resetButton');
+        const resultImageElement = document.getElementById('resultImage');
         let questions = [];
         let correctAnswers = [];
         let startTime;  // Used to record start time
@@ -139,6 +142,7 @@
             correctAnswers = [];
             exerciseElement.innerHTML = '';
             statusElement.textContent = '';  // Clear status
+            resultImageElement.innerHTML = ''; // Clear image
 
             for (let i = 0; i < numQuestions; i++) {
                 let num1, num2, questionText, correctAnswer;
@@ -191,12 +195,19 @@
             if (unanswered) {
                 statusElement.textContent = `Please complete all questions before checking!`;
                 statusElement.style.color = 'orange';
+                resultImageElement.innerHTML = ''; // Clear image
             } else {
                 // Calculate time taken
                 const endTime = new Date();
                 const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
                 statusElement.textContent = `You got ${correctCount} / ${inputs.length} correct! Time taken: ${timeTaken} seconds.`;
                 statusElement.style.color = 'green';
+
+                if (correctCount === inputs.length) {
+                    resultImageElement.innerHTML = '<img src="https://media.tenor.com/ou21VYMpj-UAAAAe/my-melody-nice.png" alt="Success" width="200">';
+                } else {
+                    resultImageElement.innerHTML = '<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7PeQSU1Ky-fFkyPHvNNaYW0HW6UYooOJeWw&s" alt="Try Again" width="200">';
+                }
             }
         }
 
